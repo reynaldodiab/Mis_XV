@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis XV Años - Arleth Zaric</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+           RESET & BASIC STYLES
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #5C6B56;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* ============================================
+           COVER / PORTADA STYLES
+           ============================================ */
+        .cover-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 999;
+            display: flex;
+            transition: visibility 0s linear 1.4s;
+        }
+
+        .cover-overlay.hidden {
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .cover-half {
+            width: 50%;
+            height: 100%;
+            background-color: #5C6B56;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem;
+            position: relative;
+            transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1);
+            z-index: 2;
+        }
+
+        .cover-half.left {
+            transform: translateX(0);
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .cover-half.right {
+            transform: translateX(0);
+        }
+
+        .cover-overlay.opened .cover-half.left {
+            transform: translateX(-100%);
+        }
+
+        .cover-overlay.opened .cover-half.right {
+            transform: translateX(100%);
+        }
+
+        .cover-princess {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            width: 320px;
+            height: 320px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 6px solid #fff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 3;
+            transition: all 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        .cover-overlay.opened .cover-princess {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.6);
+        }
+
+        .cover-text-left {
+            text-align: right;
+            margin-right: auto;
+            max-width: 320px;
+        }
+
+        .cover-text-right {
+            text-align: left;
+            margin-left: auto;
+            max-width: 320px;
+        }
+
+        .cover-label {
+            font-size: 0.9rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 1rem;
+        }
+
+        .cover-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 400;
+            line-height: 1.1;
+        }
+
+        .cover-title span {
+            display: block;
+            font-style: italic;
+            font-size: 2.2rem;
+            color: rgba(255,255,255,0.85);
+        }
+
+        .cover-message {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: rgba(255,255,255,0.75);
+            margin-bottom: 1.5rem;
+        }
+
+        .cover-date {
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        .btn-open {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #fff;
+            color: #5C6B56;
+            border: none;
+            padding: 0.9rem 2rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+        }
+
+        .btn-open:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+            background: rgba(255,255,255,0.95);
+        }
+
+        .btn-open svg {
+            width: 18px;
+            height: 18px;
+            fill: #5C6B56;
+        }
+
+        @media (max-width: 768px) {
+            .cover-overlay { flex-direction: column; }
+            .cover-half { width: 100%; height: 50%; padding: 2rem; text-align: center; }
+            .cover-text-left, .cover-text-right { text-align: center; margin: 0 auto; }
+            .cover-princess { width: 200px; height: 200px; }
+            .cover-title { font-size: 2.8rem; }
+            .cover-title span { font-size: 1.8rem; }
+            .cover-overlay.opened .cover-half.left { transform: translateY(-100%); }
+            .cover-overlay.opened .cover-half.right { transform: translateY(100%); }
+        }
+
+        /* ============================================
+           MAIN CONTENT STYLES
+           ============================================ */
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-color: #7A8B74;
+            position: relative;
+            padding: 2rem;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 1s ease 0.3s, transform 1s ease 0.3s;
+        }
+
+        .hero.revealed { opacity: 1; transform: scale(1); }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1920&q=80') center/cover;
+            opacity: 0.12;
+        }
+
+        .hero-content { position: relative; z-index: 1; }
+        .hero-subtitle { font-size: 0.9rem; letter-spacing: 6px; text-transform: uppercase; color: rgba(255,255,255,0.8); margin-bottom: 1.5rem; }
+        .hero-title { font-family: 'Playfair Display', serif; font-size: 4.5rem; font-weight: 500; color: #fff; margin-bottom: 0.5rem; }
+        .hero-title span { display: block; font-size: 1.8rem; font-style: italic; color: rgba(255,255,255,0.9); margin-top: 0.5rem; letter-spacing: 2px; }
+        .hero-date { margin-top: 2rem; font-size: 1.1rem; letter-spacing: 4px; color: rgba(255,255,255,0.85); }
+
+        .scroll-indicator { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); animation: bounce 2s infinite; }
+        .scroll-indicator svg { width: 30px; height: 30px; fill: rgba(255,255,255,0.6); }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-15px); }
+            60% { transform: translateX(-50%) translateY(-8px); }
+        }
+
+        /* Family Section */
+        .family-section {
+            background-color: #64745E;
+            padding: 5rem 2rem;
+            text-align: center;
+        }
+
+        .family-container {
+            max-width: 650px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 3.5rem 2rem;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+        }
+
+        .family-intro { font-size: 1.1rem; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.9); margin-bottom: 0.5rem; }
+        .family-main-title { font-family: 'Playfair Display', serif; font-size: 3rem; color: #fff; margin-bottom: 2rem; }
+        .family-blessing { font-size: 1.15rem; line-height: 1.8; font-style: italic; color: rgba(255,255,255,0.85); margin-bottom: 2rem; }
+        .family-group { margin-bottom: 2rem; }
+        .family-label { font-size: 0.85rem; letter-spacing: 4px; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 0.8rem; }
+        .family-names { font-family: 'Playfair Display', serif; font-size: 1.45rem; line-height: 1.6; color: #fff; }
+        .family-names.padrinos { font-size: 1.6rem; font-weight: 600; letter-spacing: 1px; }
+
+        /* Countdown Section */
+        .countdown-section { background-color: #6B7B68; padding: 5rem 2rem; text-align: center; }
+        .countdown-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; margin-bottom: 0.5rem; }
+        .countdown-subtitle { font-size: 1rem; color: rgba(255,255,255,0.7); margin-bottom: 3rem; letter-spacing: 2px; }
+        .countdown { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; max-width: 800px; margin: 0 auto; }
+        .countdown-item { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 16px; padding: 2rem 2.5rem; min-width: 130px; backdrop-filter: blur(10px); }
+        .countdown-number { font-family: 'Playfair Display', serif; font-size: 3.5rem; font-weight: 600; line-height: 1; }
+        .countdown-label { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 3px; color: rgba(255,255,255,0.7); margin-top: 0.5rem; display: block; }
+
+        /* Carousel Section */
+        .carousel-section { background-color: #73846F; padding: 5rem 2rem; text-align: center; }
+        .carousel-container { position: relative; max-width: 450px; height: 600px; margin: 0 auto; overflow: hidden; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); border: 6px solid #fff; }
+        .carousel-slide { display: flex; width: 100%; height: 100%; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .carousel-slide img { width: 100%; height: 100%; object-fit: cover; flex-shrink: 0; }
+        .carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.25); backdrop-filter: blur(4px); border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; }
+        .carousel-btn:hover { background: rgba(255,255,255,0.5); }
+        .carousel-btn svg { width: 24px; height: 24px; fill: #fff; }
+        .carousel-btn.prev { left: 15px; }
+        .carousel-btn.next { right: 15px; }
+        .carousel-dots { display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.5rem; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.3); cursor: pointer; }
+        .dot.active { background: #fff; }
+
+        /* Details Section */
+        .details-section { background-color: #8A9B84; padding: 5rem 2rem; text-align: center; }
+        .section-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; margin-bottom: 3rem; }
+        .details-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 900px; margin: 0 auto; }
+        .detail-card { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.18); border-radius: 20px; padding: 2.5rem 2rem; backdrop-filter: blur(10px); transition: transform 0.3s ease; }
+        .detail-card:hover { transform: translateY(-5px); }
+        .detail-icon { width: 60px; height: 60px; margin: 0 auto 1.5rem; background: rgba(255,255,255,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .detail-icon svg { width: 28px; height: 28px; fill: #fff; }
+        .detail-card h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; margin-bottom: 0.8rem; }
+        .detail-card p { font-size: 1rem; color: rgba(255,255,255,0.8); line-height: 1.7; }
+
+        /* Location Section (Ubicaciones Estilo Limpio) */
+        .location-section {
+            background-color: #7A8B74;
+            padding: 6rem 2rem;
+            text-align: center;
+        }
+
+        .location-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 4rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .location-card-clean {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .location-icon-clean {
+            width: 76px;
+            height: 76px;
+            margin-bottom: 2rem;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .location-icon-clean svg {
+            width: 32px;
+            height: 32px;
+            fill: #fff;
+        }
+
+        .location-title-clean {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.2rem;
+            font-weight: 400;
+            margin-bottom: 2rem;
+            color: #fff;
+            letter-spacing: 0.5px;
+        }
+
+        .location-name-clean {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+            color: #fff;
+            line-height: 1.2;
+        }
+
+        .location-address-clean {
+            font-family: 'Lato', sans-serif;
+            font-size: 1.15rem;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 3rem;
+            line-height: 1.6;
+            font-weight: 400;
+            min-height: 80px;
+        }
+
+        .btn-location-clean {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+            background: #fff;
+            color: #5C6B56;
+            text-decoration: none;
+            padding: 1.1rem 2.8rem;
+            border-radius: 50px;
+            font-family: 'Lato', sans-serif;
+            font-weight: 700;
+            font-size: 1.05rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .btn-location-clean:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .btn-location-clean svg {
+            width: 18px;
+            height: 18px;
+            fill: #5C6B56;
+        }
+
+        /* Footer */
+        .footer { background-color: #5C6B56; padding: 3.5rem 2rem; text-align: center; border-top: 1px solid rgba(255,255,255,0.08); }
+        .footer-text { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-style: italic; color: rgba(255,255,255,0.7); }
+        .footer-sub { font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-top: 0.5rem; }
+
+        .divider { width: 60px; height: 1px; background: rgba(255,255,255,0.4); margin: 1.5rem auto; }
+
+        /* Animations */
+        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 3rem; }
+            .hero-title span { font-size: 1.3rem; }
+            .countdown { gap: 1rem; }
+            .countdown-item { padding: 1.5rem 1.8rem; min-width: 100px; }
+            .countdown-number { font-size: 2.5rem; }
+            .carousel-container { max-width: 90%; height: 500px; }
+            .countdown-section, .details-section, .location-section, .family-section, .carousel-section { padding: 4rem 1.5rem; }
+            .family-main-title { font-size: 2.3rem; }
+            .location-title-clean { font-size: 2.8rem; }
+            .location-name-clean { font-size: 1.9rem; }
+            .location-grid { gap: 3.5rem; }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title { font-size: 2.5rem; }
+            .countdown-item { min-width: 80px; padding: 1.2rem 1.2rem; }
+            .countdown-number { font-size: 2rem; }
+            .countdown-label { font-size: 0.7rem; }
+            .carousel-container { height: 400px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Etiqueta de audio oculta con reproducción en bucle (loop) -->
+    <audio id="bgMusic" loop>
+        <source src="vals.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+
+    <!-- ============================================
+         COVER / PORTADA
+         ============================================ -->
+    <div class="cover-overlay" id="coverOverlay">
+        <div class="cover-half left">
+            <div class="cover-text-left">
+                <p class="cover-label">Te invito a celebrar</p>
+                <h1 class="cover-title">
+                    Mis XV
+                    <span>Años</span>
+                </h1>
+            </div>
+        </div>
+
+        <img src="princesa.jpg" alt="Arleth Zaric" class="cover-princess" id="coverPrincess">
+
+        <div class="cover-half right">
+            <div class="cover-text-right">
+                <p class="cover-message">Una noche mágica que quiero compartir contigo.</p>
+                <p class="cover-date">8 de Agosto</p>
+                <button class="btn-open" id="btnOpen" onclick="openInvitation()">
+                    Abrir Invitación
+                    <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         MAIN INVITATION CONTENT
+         ============================================ -->
+    <main id="mainContent">
+        <!-- Hero Section -->
+        <section class="hero" id="heroSection">
+            <div class="hero-content">
+                <p class="hero-subtitle">Te invito a celebrar</p>
+                <h1 class="hero-title">
+                    Arleth Zaric
+                    <span>Mis 15 Años</span>
+                </h1>
+                <div class="divider"></div>
+                <p class="hero-date">Sábado 8 de Agosto</p>
+            </div>
+            <div class="scroll-indicator">
+                <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+            </div>
+        </section>
+
+        <!-- Family Section -->
+        <section class="family-section">
+            <div class="family-container fade-in">
+                <p class="family-intro">Tengo el honor de invitarlos a</p>
+                <h2 class="family-main-title">Mis 15 años</h2>
+                <h3 class="family-main-title" style="margin-top: -1.5rem; font-style: italic; font-weight: 400;">Arleth Zaric</h3>
+                
+                <p class="family-blessing">Con la bendición de Dios y en compañía de:</p>
+                
+                <div class="family-group">
+                    <p class="family-label">Mis Padres</p>
+                    <p class="family-names">
+                        Adrian Daniel Ruiz Aguilar<br>
+                        Maricela López Bautista
+                    </p>
+                </div>
+
+                <div class="divider" style="background: rgba(255,255,255,0.2); margin: 2rem auto;"></div>
+
+                <div class="family-group" style="margin-bottom: 0;">
+                    <p class="family-label">Y Mis Padrinos</p>
+                    <p class="family-names padrinos">
+                        Jorge Arturo Venado Cuevas<br>
+                        Maricela Martín Reyes
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Countdown Section -->
+        <section class="countdown-section">
+            <h2 class="countdown-title fade-in">Falta poco para el gran día</h2>
+            <p class="countdown-subtitle fade-in">El momento más esperado está por llegar</p>
+            <div class="countdown fade-in" id="countdown">
+                <div class="countdown-item">
+                    <span class="countdown-number" id="days">00</span>
+                    <span class="countdown-label">Días</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="hours">00</span>
+                    <span class="countdown-label">Horas</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="minutes">00</span>
+                    <span class="countdown-label">Minutos</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="seconds">00</span>
+                    <span class="countdown-label">Segundos</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Carousel Section -->
+        <section class="carousel-section">
+            <h2 class="section-title fade-in" style="margin-bottom: 2.5rem;">Mis Recuerdos</h2>
+            <div class="carousel-container fade-in">
+                <button class="carousel-btn prev" onclick="moveSlide(-1)">
+                    <svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
+                </button>
+                <button class="carousel-btn next" onclick="moveSlide(1)">
+                    <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+                </button>
+                
+                <div class="carousel-slide" id="carouselSlide">
+                    <img src="1.jpeg" alt="Arleth Zaric Foto 1">
+                    <img src="2.jpeg" alt="Arleth Zaric Foto 2">
+                    <img src="3.jpeg" alt="Arleth Zaric Foto 3">
+                    <img src="4.jpeg" alt="Arleth Zaric Foto 4">
+                    <img src="5.jpeg" alt="Arleth Zaric Foto 5">
+                    <img src="6.jpg" alt="Arleth Zaric Foto 6">
+                </div>
+            </div>
+            <div class="carousel-dots">
+                <span class="dot active" onclick="currentSlide(0)"></span>
+                <span class="dot" onclick="currentSlide(1)"></span>
+                <span class="dot" onclick="currentSlide(2)"></span>
+                <span class="dot" onclick="currentSlide(3)"></span>
+                <span class="dot" onclick="currentSlide(4)"></span>
+                <span class="dot" onclick="currentSlide(5)"></span>
+            </div>
+        </section>
+
+        <!-- Details Section -->
+        <section class="details-section">
+            <h2 class="section-title fade-in">Detalles del Evento</h2>
+            <div class="details-grid">
+                <div class="detail-card fade-in">
+                    <div class="detail-icon">
+                        <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/></svg>
+                    </div>
+                    <h3>Fecha</h3>
+                    <p>Sábado 8 de Agosto</p>
+                </div>
+                <div class="detail-card fade-in">
+                    <div class="detail-icon">
+                        <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                    </div>
+                    <h3>Horarios</h3>
+                    <p><strong>Misa:</strong> 12:00 PM<br><strong>Recepción:</strong> 04:00 PM</p>
+                </div>
+                <div class="detail-card fade-in">
+                    <div class="detail-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                    </div>
+                    <h3>Ubicaciones</h3>
+                    <p>Santa María Chiconcuac,<br>Estado de México</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Location Section (Ubicaciones Estilo Limpio) -->
+        <section class="location-section">
+            <div class="location-grid">
+                
+                <!-- Apartado 1: Iglesia -->
+                <div class="location-card-clean fade-in">
+                    <div class="location-icon-clean">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                    </div>
+                    <h2 class="location-title-clean">Cómo llegar</h2>
+                    <p class="location-name-clean">Parroquia de Santa María Chiconcuac</p>
+                    <p class="location-address-clean">
+                        Plaza de la Constitución s/n,<br>
+                        Centro, Santa María Chiconcuac
+                    </p>
+                    <a href="https://www.google.com/maps/search/?api=1&query=Parroquia+de+Santa+Maria+Chiconcuac+Centro+Chiconcuac" target="_blank" class="btn-location-clean">
+                        <svg viewBox="0 0 24 24"><path d="M22.43 10.59l-9.01-9.01c-.75-.75-1.97-.75-2.72 0l-9.01 9.01c-.75.75-.75 1.97 0 2.72l9.01 9.01c.75.75 1.97.75 2.72 0l9.01-9.01c.75-.74.75-1.97 0-2.72zM13.5 14.5V12H10v3H8.5v-4.5c0-.28.22-.5.5-.5h4.5V7.5L17 11l-3.5 3.5z"/></svg>
+                        Ver ubicación en Google Maps
+                    </a>
+                </div>
+
+                <!-- Apartado 2: Salón -->
+                <div class="location-card-clean fade-in">
+                    <div class="location-icon-clean">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                    </div>
+                    <h2 class="location-title-clean">Cómo llegar</h2>
+                    <p class="location-name-clean">Jardín de eventos Buendía</p>
+                    <p class="location-address-clean">
+                        C. Bugambilias s/n,<br>
+                        Santa María Chiconcuac,<br>
+                        C.P. 56270
+                    </p>
+                    <a href="https://www.google.com/maps/search/?api=1&query=Jardin+de+eventos+Buendia+Bugambilias+Santa+Maria+Chiconcuac" target="_blank" class="btn-location-clean">
+                        <svg viewBox="0 0 24 24"><path d="M22.43 10.59l-9.01-9.01c-.75-.75-1.97-.75-2.72 0l-9.01 9.01c-.75.75-.75 1.97 0 2.72l9.01 9.01c.75.75 1.97.75 2.72 0l9.01-9.01c.75-.74.75-1.97 0-2.72zM13.5 14.5V12H10v3H8.5v-4.5c0-.28.22-.5.5-.5h4.5V7.5L17 11l-3.5 3.5z"/></svg>
+                        Ver ubicación en Google Maps
+                    </a>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p class="footer-text">Con amor y alegría, te espero</p>
+            <p class="footer-sub">Una noche que guardaremos para siempre en nuestros corazones.</p>
+        </footer>
+    </main>
+
+    <script>
+        // ============================================
+        // COVER OPEN ANIMATION & AUDIO PLAY
+        // ============================================
+        function openInvitation() {
+            const cover = document.getElementById('coverOverlay');
+            const hero = document.getElementById('heroSection');
+            const music = document.getElementById('bgMusic');
+
+            // Intenta reproducir la música al interactuar con el botón
+            if (music) {
+                music.play().catch(error => {
+                    console.log("El navegador bloqueó el autoplay o el archivo no existe:", error);
+                });
+            }
+
+            cover.classList.add('opened');
+
+            setTimeout(() => { hero.classList.add('revealed'); }, 400);
+            setTimeout(() => { cover.classList.add('hidden'); }, 1400);
+        }
+
+        // ============================================
+        // COUNTDOWN TIMER
+        // ============================================
+        function updateCountdown() {
+            const eventDate = new Date('2026-08-08T12:00:00').getTime();
+            const now = new Date().getTime();
+            const distance = eventDate - now;
+
+            if (distance > 0) {
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById('days').textContent = String(days).padStart(2, '0');
+                document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+                document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+                document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+            } else {
+                document.getElementById('days').textContent = '00';
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+            }
+        }
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+        // ============================================
+        // CAROUSEL LOGIC
+        // ============================================
+        let currentIdx = 0;
+        const slides = document.getElementById('carouselSlide');
+        const dots = document.querySelectorAll('.dot');
+        const totalSlides = dots.length;
+        let carouselInterval = setInterval(autoSlide, 4000);
+
+        function updateCarousel() {
+            slides.style.transform = `translateX(-${currentIdx * 100}%)`;
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentIdx);
+            });
+        }
+
+        function moveSlide(direction) {
+            clearInterval(carouselInterval);
+            currentIdx = (currentIdx + direction + totalSlides) % totalSlides;
+            updateCarousel();
+            carouselInterval = setInterval(autoSlide, 4000);
+        }
+
+        function currentSlide(index) {
+            clearInterval(carouselInterval);
+            currentIdx = index;
+            updateCarousel();
+            carouselInterval = setInterval(autoSlide, 4000);
+        }
+
+        function autoSlide() {
+            currentIdx = (currentIdx + 1) % totalSlides;
+            updateCarousel();
+        }
+
+        // ============================================
+        // SCROLL ANIMATIONS
+        // ============================================
+        const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) { entry.target.classList.add('visible'); }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => { observer.observe(el); });
+    </script>
+
+</body>
+</html>
